@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.lauracercas.moviecards.endtoendtestplaywright.IndexE2ETest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.897 s - in com.lauracercas.moviecards.endtoendtestplaywright.IndexE2ETest

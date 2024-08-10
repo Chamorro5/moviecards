@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.lauracercas.moviecards.unittest.model.ActorTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s - in com.lauracercas.moviecards.unittest.model.ActorTest
