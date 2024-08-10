@@ -51,6 +51,13 @@ jobs:
         runs-on: self-hosted
         continue-on-error: true
         steps:
+          - name: Set up Node.js using nvm
+            run: |
+                  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                  source ~/.nvm/nvm.sh
+                  nvm install 14
+                  nvm use 14
+                  nvm alias default 14
           - name: Checkout code
             uses: actions/checkout@v2
           - name: Set up JDK 11
