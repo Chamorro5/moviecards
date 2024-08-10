@@ -10,23 +10,61 @@ jobs:
         name: Build and Package
         runs-on: ubuntu-latest
         steps:
-            - name: Build and package
-            run: echo "Build and package"
+            - name: Checkout code
+            uses: actions/checkout@v2
+            - name: Set up JDK 11
+            uses: actions/setup-java@v2
+            with:
+                java-version: "11"
+                distribution: "adopt"
+            - name: Build with Maven
+            run: mvn clean package -DskipTests
     test:
         name: Unit, integration and e2e tests
         needs: build
         runs-on: ubuntu-latest
         steps:
-            - name: Unit, integration and e2e tests
-            run: echo "Unit, integration and e2e tests"
+            - name: Checkout code
+            uses: actions/checkout@v2
+            
+            - name: Set up JDK 11
+            uses: actions/setup-java@v2
+            with:
+                java-version: "11"
+                   distribution: "adopt"
+            - name: Install Google Chrome and ChromeDriver to e2e tests
+            run: |
+                wget https://dl.google.com/linux/direct/google-chromestable_current_amd64.deb
+                sudo dpkg -i google-chrome-stable_current_amd64.deb
+                sudo apt --fix-broken install -y
+                CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                curl -L -o chromedriver.zip https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+                unzip chromedriver.zip
+                chmod +x chromedriver
+                sudo mv chromedriver /usr/local/bin/
+            - name: Run application to e2e tests
+            run: mvn spring-boot:run -Ptest & sleep 60
+            - name: Run tests
+            run: mvn clean verify -Ptest
     qa:
         name: Quality Assurance with Sonarqube
         needs: test
         runs-on: self-hosted
         continue-on-error: true
         steps:
-            - name: Quality Assurance with Sonarqube
-            run: echo "Quality Assurance with Sonarqube"
+            - name: Checkout code
+            uses: actions/checkout@v2
+            - name: Set up JDK 11
+            uses: actions/setup-java@v2
+            with:
+                java-version: "11"
+                distribution: "adopt"
+            - name: Build with Maven skipping tests and with test profile
+            run: mvn clean package -DskipTests
+            - name: Sonarqube scan
+            run: |
+                mvn sonar:sonar -Dsonar.host.url=http://sonarqube:9000 -
+                Dsonar.qualitygate.wait=true -Dsonar.login=admin -Dsonar.password=admin
     deploy:
         name: Deploy Application in Azure
         runs-on: ubuntu-latest
